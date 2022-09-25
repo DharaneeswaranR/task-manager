@@ -11,3 +11,7 @@ body {
 .input-field {
     @apply w-full my-1 p-2.5 rounded-lg ring-2 ring-indigo-300 shadow-inner outline-0 focus:ring-indigo-700 duration-300;
 }
+
+.sort-btn {
+    @apply px-1 mr-2 rounded-full border border-indigo-400 cursor-pointer text-[0.95rem];
+}

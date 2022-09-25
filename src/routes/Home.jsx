@@ -1,16 +1,13 @@
 import { useState, useEffect } from "react"
 import { PlusIcon } from '@heroicons/react/20/solid'
 import { TrashIcon } from '@heroicons/react/24/outline'
-import { AnimatedList } from "react-animated-list"
 import axios from "axios"
 import Navbar from "../components/Navbar"
-import "../database/tasks"
-
-// import tasksData from "../database/tasks"
 
 export default function Home() {
     const [tasks, setTasks] = useState([])
     const [description, setDescription] = useState("")
+    const [sort, setSort] = useState(0) // 0: all, 1: completed, 2: Uncompleted
 
     useEffect(() => {
         async function fetchTasks() {
@@ -53,6 +50,16 @@ export default function Home() {
             return updatedTasks
         })
     }
+
+    function sortTasks() {
+        if (sort === 0) {
+            return tasks
+        } else if (sort === 1) {
+            return tasks.filter(task => task.completed === true)
+        } else {
+            return tasks.filter(task => task.completed === false)
+        }
+    }
     
     return (
         <> 
@@ -76,13 +83,28 @@ export default function Home() {
                             <PlusIcon className="h-6 w-6"/>
                             Add
                         </button>
-                    </div>
-                    
+                    </div>    
                 </div>
                 <div className="flex flex-col">
-                    <h3 className="font-semibold text-xl">Your tasks 📝</h3>
-                    <AnimatedList animation="grow" >
-                        {tasks.map(({ _id, description, completed }) => {
+                    <h3 className="font-semibold text-xl mb-2">Your tasks 📝</h3>
+                    <div className="mb-3">
+                        <span 
+                            className={`sort-btn ${sort === 0 ? 'bg-indigo-50' : ''}`} 
+                            onClick={() => setSort(0)}
+                        >All tasks
+                        </span>
+                        <span 
+                            className={`sort-btn ${sort === 1 ? 'bg-indigo-50' : ''}`} 
+                            onClick={() => setSort(1)}
+                        >Completed
+                        </span>
+                        <span 
+                            className={`sort-btn ${sort === 2 ? 'bg-indigo-50' : ''}`}
+                            onClick={() => setSort(2)}
+                        >Uncompleted
+                        </span>
+                    </div> 
+                        {sortTasks(tasks).map(({ _id, description, completed }) => {
                             return (
                                 <div id="task" className={`flex w-full my-4 p-4 rounded-2xl ${completed ? 'bg-green-100': 'bg-indigo-50'}`} key={_id}>
                                     <input 
@@ -100,7 +122,7 @@ export default function Home() {
                                 </div>
                             )
                         })}
-                    </AnimatedList>
+                    
                 </div>
             </div>
         </>   
