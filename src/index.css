@@ -13,5 +13,5 @@ body {
 }
 
 .sort-btn {
-    @apply px-1 mr-2 rounded-full border border-indigo-400 cursor-pointer text-[0.95rem];
+    @apply px-2 mr-2 rounded-full cursor-pointer text-[0.95rem];
 }
