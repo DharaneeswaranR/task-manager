@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react"
 import { PlusIcon } from '@heroicons/react/20/solid'
-import { TrashIcon } from '@heroicons/react/24/outline'
 import axios from "axios"
+import { sortTasks } from "../Utils/utils"
 import Navbar from "../components/Navbar"
+import Task from "../components/Task"
 
 export default function Home() {
     const [tasks, setTasks] = useState([])
@@ -50,16 +51,6 @@ export default function Home() {
             return updatedTasks
         })
     }
-
-    function sortTasks() {
-        if (sort === 0) {
-            return tasks
-        } else if (sort === 1) {
-            return tasks.filter(task => task.completed === true)
-        } else {
-            return tasks.filter(task => task.completed === false)
-        }
-    }
     
     return (
         <> 
@@ -89,40 +80,34 @@ export default function Home() {
                     <h3 className="font-semibold text-xl mb-2">Your tasks 📝</h3>
                     <div className="mb-3">
                         <span 
-                            className={`sort-btn ${sort === 0 ? 'bg-indigo-50' : ''}`} 
+                            className={`sort-btn ${sort === 0 ? 'bg-indigo-700 text-white' : 'bg-indigo-50'}`} 
                             onClick={() => setSort(0)}
                         >All tasks
                         </span>
                         <span 
-                            className={`sort-btn ${sort === 1 ? 'bg-indigo-50' : ''}`} 
+                            className={`sort-btn ${sort === 1 ? 'bg-indigo-700 text-white' : 'bg-indigo-50'}`} 
                             onClick={() => setSort(1)}
                         >Completed
                         </span>
                         <span 
-                            className={`sort-btn ${sort === 2 ? 'bg-indigo-50' : ''}`}
+                            className={`sort-btn ${sort === 2 ? 'bg-indigo-700 text-white' : 'bg-indigo-50'}`}
                             onClick={() => setSort(2)}
                         >Uncompleted
                         </span>
                     </div> 
-                        {sortTasks(tasks).map(({ _id, description, completed }) => {
+                    <div className="mt-2">
+                        {sortTasks(tasks, sort).map(({ _id, description, completed }) => {
                             return (
-                                <div id="task" className={`flex w-full my-4 p-4 rounded-2xl ${completed ? 'bg-green-100': 'bg-indigo-50'}`} key={_id}>
-                                    <input 
-                                        type="checkbox" 
-                                        name="completed" 
-                                        id="completed" 
-                                        checked={completed} 
-                                        className="w-5 mr-2"
-                                        onChange={(event) => handleChange(_id, event)}
-                                    />
-                                    <p className="text-lg font-medium">{description}</p>
-                                    <button onClick={() => deleteTask(_id)}>    
-                                        <TrashIcon className="h-5 w-5 ml-auto"/>
-                                    </button>
-                                </div>
+                                <Task 
+                                    description={description}
+                                    completed={completed}
+                                    id={_id}
+                                    handleChange={handleChange}
+                                    deleteTask={deleteTask}
+                                />
                             )
                         })}
-                    
+                    </div>
                 </div>
             </div>
         </>   
