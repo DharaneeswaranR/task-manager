@@ -1,10 +1,12 @@
-import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useRef, useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import LoginImg from '../assets/login-image.svg'
 
 export default function Login() {
     const inputEl = useRef(null)
+    const navigate = useNavigate()
+    const [error, setError] = useState(false)
     const [formData, setFormData] = useState(
         {
             email: "",
@@ -12,14 +14,11 @@ export default function Login() {
         }
     )
 
-    // useEffect(() => {
-    //     async function fetchData() {
-    //         const res = await axios.get('http://localhost:5000/hello')
-    //         console.log(res.data)
-    //     }
-
-    //     fetchData()
-    // }, [])
+    useEffect(() => {
+        if (localStorage.getItem('token')) {
+            navigate('/')
+        }
+    }, [navigate])
 
     function handleChange(event) {
         setFormData(prevFormData => {
@@ -33,8 +32,21 @@ export default function Login() {
     async function handleSubmit(event) {
         if (inputEl.current.checkValidity()) {
             event.preventDefault()
+            const { email, password } = formData
+
+            try {
+                const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/user/login`, { email, password })
+                localStorage.setItem("token", res.data.token)
+                navigate('/')
+            } catch (e) {
+                setError(true)
+                setFormData({
+                    username: "",
+                    email: "",
+                    password: ""
+                })
+            }  
             
-            await axios.post('http://localhost:5000/user', { })
         }
     }
 
@@ -46,6 +58,9 @@ export default function Login() {
             <div className='flex justify-center flex-col bg-white p-4 w-full md:p-10 lg:p-20 sm:w-[45%] sm:rounded-l-3xl'>
                 <h1 className='font-bold text-4xl pb-3'>Welcome!</h1>
                 <p className='pb-10 font-semibold'>Please login to continue.</p>
+                {error && 
+                    <p className='text-red-600'>Incorrect Credentials. Try again.</p>
+                }
                 <form>
                     <label htmlFor="email" className='block py-2 text-lg'>Email</label>
                     <input

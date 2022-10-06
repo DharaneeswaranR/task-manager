@@ -1,23 +1,54 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { PlusIcon } from '@heroicons/react/20/solid'
+import autoAnimate from '@formkit/auto-animate'
 import axios from "axios"
 import { sortTasks } from "../Utils/utils"
 import Navbar from "../components/Navbar"
 import Task from "../components/Task"
+import { useNavigate } from "react-router-dom"
 
 export default function Home() {
     const [tasks, setTasks] = useState([])
     const [description, setDescription] = useState("")
+    const [user, setUser] = useState({})
     const [sort, setSort] = useState(0) // 0: all, 1: completed, 2: Uncompleted
+    const listRef = useRef();
+    const navigate = useNavigate()
 
     useEffect(() => {
-        async function fetchTasks() {
-            const tasks = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/task`)
-            setTasks([...tasks.data])
-        }
+        listRef.current && autoAnimate(listRef.current);
+    }, [listRef])
 
-        fetchTasks()
-    }, [])
+
+    useEffect(() => {
+        try {
+            async function fetchTasks() {
+                const tasks = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/task`)
+                setTasks([...tasks.data])
+            }
+
+            async function fetchUser() {
+                const user = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/me`, { 
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                })
+
+                setUser(user.data)
+            }
+
+            if (localStorage.getItem('token')) {
+                fetchTasks()
+                fetchUser()
+            } else {
+                navigate('/login')
+            }
+
+        } catch (error) {
+            navigate('/login')
+        }      
+        
+    }, [navigate])
 
     async function addTask() {
         const newTask = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/task`, { description, completed: false })
@@ -56,7 +87,7 @@ export default function Home() {
         <> 
             <Navbar />
             <div className="w-3/4 lg:w-1/2 mt-10 mx-auto text-slate-800">
-                <h1 className="text-4xl font-semibold">Hello Dharani 👋</h1>
+                <h1 className="text-4xl font-semibold">Hello {user.username} 👋</h1>
                 <div className="flex justify-center mb-10 mt-8">
                     <div className="flex w-full">
                         <input 
@@ -95,13 +126,14 @@ export default function Home() {
                         >Uncompleted
                         </span>
                     </div> 
-                    <div className="mt-2">
+                    <div className="mt-2" ref={listRef}>
                         {sortTasks(tasks, sort).map(({ _id, description, completed }) => {
                             return (
                                 <Task 
                                     description={description}
                                     completed={completed}
                                     id={_id}
+                                    key={_id}
                                     handleChange={handleChange}
                                     deleteTask={deleteTask}
                                 />

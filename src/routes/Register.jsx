@@ -1,10 +1,12 @@
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import registerImg from '../assets/register-image.svg'
+import { useEffect } from 'react'
 
 export default function Register() {
     const inputEl = useRef(null)
+    const navigate = useNavigate()
     const [error, setError] = useState(false)
     const [formData, setFormData] = useState(
         {
@@ -14,7 +16,13 @@ export default function Register() {
         }
     )
 
-    const handleChange = (event) => {
+    useEffect(() => {
+        if (localStorage.getItem('token')) {
+            navigate('/')
+        }
+    }, [navigate])
+
+    function handleChange(event) {
         setFormData(prevFormData => {
             return {
                 ...prevFormData,
@@ -29,13 +37,16 @@ export default function Register() {
             const { username, email, password } = formData
 
             try {
-                const res = await axios.post('http://localhost:5000/user', { username, email, password }, {
-                    withCredentials: true
-                })
-                console.log(res.data)
+                const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/user`, { username, email, password })
+                localStorage.setItem("token", res.data.token)
+                navigate('/')
             } catch (e) {
-                console.log(e.response)
                 setError(true)
+                setFormData({
+                    username: "",
+                    email: "",
+                    password: ""
+                })
             }  
             
         }
