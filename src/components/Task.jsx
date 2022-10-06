@@ -2,7 +2,7 @@ import { TrashIcon } from "@heroicons/react/24/outline"
 
 export default function Task({ id, completed, description, handleChange, deleteTask }) {
     return (
-        <div id="task" className={`flex w-full my-4 p-4 rounded-2xl ${completed ? 'bg-green-200': 'bg-indigo-50'}`} key={id}>
+        <div id="task" className={`flex w-full my-4 p-4 rounded-2xl ${completed ? 'bg-green-200': 'bg-indigo-50'}`}>
             <input 
                 type="checkbox" 
                 name="completed" 
