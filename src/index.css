@@ -4,8 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
+
+* {
+    -ms-overflow-style: none;  
+    scrollbar-width: none;
+}
+
 body {
-    @apply font-body;
+    @apply font-body;   
 }
 
 .input-field {
@@ -15,3 +21,8 @@ body {
 .sort-btn {
     @apply px-2 mr-2 rounded-full cursor-pointer text-[0.95rem];
 }
+
+::-webkit-scrollbar {
+    display: none;
+}
+
