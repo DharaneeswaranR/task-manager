@@ -108,23 +108,23 @@ export default function Home() {
                     </div>    
                 </div>
                 <div className="flex flex-col">
-                    <h3 className="font-semibold text-xl mb-2">Your tasks 📝</h3>
+                    <h2 className="font-semibold text-xl mb-2">Your tasks 📝</h2>
                     <div className="mb-3">
-                        <span 
+                        <button 
                             className={`sort-btn ${sort === 0 ? 'bg-indigo-700 text-white' : 'bg-indigo-50'}`} 
                             onClick={() => setSort(0)}
                         >All tasks
-                        </span>
-                        <span 
+                        </button>
+                        <button 
                             className={`sort-btn ${sort === 1 ? 'bg-indigo-700 text-white' : 'bg-indigo-50'}`} 
                             onClick={() => setSort(1)}
                         >Completed
-                        </span>
-                        <span 
+                        </button>
+                        <button 
                             className={`sort-btn ${sort === 2 ? 'bg-indigo-700 text-white' : 'bg-indigo-50'}`}
                             onClick={() => setSort(2)}
                         >Uncompleted
-                        </span>
+                        </button>
                     </div> 
                     <div className="mt-2" ref={listRef}>
                         {sortTasks(tasks, sort).map(({ _id, description, completed }) => {
