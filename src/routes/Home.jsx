@@ -1,18 +1,20 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useContext } from "react"
 import { PlusIcon } from '@heroicons/react/20/solid'
 import autoAnimate from '@formkit/auto-animate'
 import axios from "axios"
-import { sortTasks } from "../Utils/utils"
+import { sortTasks } from "../utils/utils"
 import Navbar from "../components/Navbar"
 import Task from "../components/Task"
 import { useNavigate } from "react-router-dom"
+import { UserContext } from "../contexts/UserContext"
 
 export default function Home() {
     const [tasks, setTasks] = useState([])
     const [description, setDescription] = useState("")
-    const [user, setUser] = useState({})
+    const [user, setUser] = useContext(UserContext)
     const [sort, setSort] = useState(0) // 0: all, 1: completed, 2: Uncompleted
-    const listRef = useRef();
+    const listRef = useRef()
+
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -23,35 +25,42 @@ export default function Home() {
     useEffect(() => {
         try {
             async function fetchTasks() {
-                const tasks = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/task`)
-                setTasks([...tasks.data])
-            }
-
-            async function fetchUser() {
-                const user = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/me`, { 
+                const tasks = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/task`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
                 })
 
-                setUser(user.data)
+                setTasks([...tasks.data])
             }
 
-            if (localStorage.getItem('token')) {
-                fetchTasks()
-                fetchUser()
-            } else {
-                navigate('/login')
-            }
-
+            fetchTasks()
         } catch (error) {
             navigate('/login')
-        }      
+        }   
         
-    }, [navigate])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+    async function fetchUser() {
+        const user = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/me`, { 
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+
+        setUser(user.data)
+    }
+
+    if (Object.keys(user).length === 0) {
+        fetchUser()
+    }  
 
     async function addTask() {
-        const newTask = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/task`, { description, completed: false })
+        const newTask = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/task`, { description, completed: false }, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
 
         setTasks(prevTasks => {
             return [
@@ -64,7 +73,11 @@ export default function Home() {
     }
 
     async function handleChange(id, event) {
-        const updatedTask = await axios.patch(`${process.env.REACT_APP_BACKEND_URL}/task/${id}`, { completed: event.target.checked })
+        const updatedTask = await axios.patch(`${process.env.REACT_APP_BACKEND_URL}/task/${id}`, { completed: event.target.checked }, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
 
         setTasks(prevTasks => {
             const updatedTasks = prevTasks.map(task => task._id === id ? updatedTask.data : task)
@@ -74,7 +87,11 @@ export default function Home() {
     }
 
     async function deleteTask(id) {
-        const deletedTask = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/task/${id}`)
+        const deletedTask = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/task/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
 
         setTasks(prevTasks => {
             const updatedTasks = prevTasks.filter(task => task._id !== deletedTask.data._id)         
