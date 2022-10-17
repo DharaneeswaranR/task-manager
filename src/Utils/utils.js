@@ -1,3 +1,5 @@
+import { Navigate, Outlet } from "react-router-dom"
+
 export function sortTasks(tasks, sort) {
     if (sort === 0) {
         return tasks
@@ -6,4 +8,8 @@ export function sortTasks(tasks, sort) {
     } else {
         return tasks.filter(task => task.completed === false)
     }
+}
+
+export function PrivateRoute() {
+    return localStorage.getItem('token') ? <Outlet /> : <Navigate to='/login' />
 }
