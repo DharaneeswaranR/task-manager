@@ -1,41 +1,63 @@
-import { UserIcon } from "@heroicons/react/24/outline";
+import { UserIcon, ArrowRightOnRectangleIcon, TrashIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
+import {  useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { UserContext } from "../contexts/UserContext";
 
 export default function Profile() {
-    const [user, setUser] = useState({})
+    const [user] = useContext(UserContext)
+    const navigate = useNavigate()
 
-    useEffect(() => {
-        async function fetchUser() {
-            const user = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/me`, { 
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-            
-            setUser(user.data)
-        }
+    async function logOut() {
+        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/user/logout`, {}, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
 
-        fetchUser()
-    }, [])
+        localStorage.removeItem('token')
+        navigate('/login')
+    }
+
+    async function deleteAccount() {
+        await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/user/me`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+
+        localStorage.removeItem('token')
+        navigate('/register')
+    }
 
     return (
         <>
             <Navbar />
-            <div className="flex items-center justify-center h-screen">
+            <div className="flex items-center justify-center mt-[-84px] h-screen">
                 <div>
                     <div className="rounded-full h-24 w-24 p-2 my-2 mx-auto bg-slate-200">
-                        <UserIcon />
+                        <UserIcon className="text-slate-600" />
                     </div>
                     <div className="text-center">
                         <p className="text-xl font-bold text-slate-800">{user.username}</p>
                         <p className="text-slate-500">{user.email}</p>
                     </div>
-                    
+                    <div className="flex flex-col p-3">
+                        <button 
+                            className="flex items-center justify-center px-3 py-1 mb-4 rounded-full w-full bg-indigo-700 text-white font-semibold hover:bg-indigo-800 active:bg-indigo-500 duration-300"
+                            onClick={logOut}
+                        >
+                            <ArrowRightOnRectangleIcon className="h-5 w-5 mr-1" />Log out
+                        </button>
+                        <button 
+                            className="flex items-center justify-center px-3 py-1 mb-5 rounded-full w-full bg-red-700 text-white font-semibold hover:bg-red-800 active:bg-red-500 duration-300"
+                            onClick={deleteAccount}
+                        >
+                            <TrashIcon className="h-5 w-5 mr-1" />Delete account
+                        </button>
+                    </div>
                 </div>
-                
             </div>
         </>
     )
