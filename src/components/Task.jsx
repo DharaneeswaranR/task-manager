@@ -8,7 +8,7 @@ export default function Task({ id, completed, description, handleChange, deleteT
                 name="completed" 
                 id={id} 
                 checked={completed} 
-                className="w-5 mr-2"
+                className="w-5 mr-2 accent-green-600"
                 onChange={(event) => handleChange(id, event)}
             />
             <label htmlFor={id} className="text-lg font-medium">{description}</label>
