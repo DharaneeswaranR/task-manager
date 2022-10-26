@@ -1,8 +1,7 @@
-import { useRef, useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import registerImg from '../assets/register-image.svg'
-import { useEffect } from 'react'
 
 export default function Register() {
     const inputEl = useRef(null)

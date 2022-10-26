@@ -1,21 +1,21 @@
 import { useState, useEffect, useRef, useContext, useMemo } from "react"
-import { ArrowPathIcon, PlusIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useNavigate } from "react-router-dom"
 import autoAnimate from '@formkit/auto-animate'
 import axios from "axios"
+import { ArrowPathIcon, PlusIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { sortTasks } from "../utils/utils"
+import { UserContext } from "../contexts/UserContext"
 import Navbar from "../components/Navbar"
 import Task from "../components/Task"
-import { useNavigate } from "react-router-dom"
-import { UserContext } from "../contexts/UserContext"
 
 export default function Home() {
+    const [user, setUser] = useContext(UserContext)
     const [tasks, setTasks] = useState([])
     const [addTaskField, setAddTaskField] = useState(false)
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
-    const [deadline, setDeadline] = useState(new Date().toISOString().split('T')[0])
+    // const [deadline, setDeadline] = useState(new Date().toISOString().split('T')[0])
     const [update, setUpdate] = useState("")
-    const [user, setUser] = useContext(UserContext)
     const [sort, setSort] = useState(0) // 0: all, 1: completed, 2: Uncompleted
     const listRef = useRef()
     const navigate = useNavigate()
@@ -170,19 +170,19 @@ export default function Home() {
                                 onChange={(event) => setDescription(event.target.value)}
                                 onKeyDown={(event) => event.key === "Enter" && addTask()}
                             />
-                            <label htmlFor="date">Deadline</label>
+                            {/* <label htmlFor="date">Deadline</label>
                             <input 
                                 type="date" 
                                 id="date"
                                 value={deadline}
                                 onChange={(event) => setDeadline(event.target.value)}
                                 className="p-1 w-fit rounded-md"
-                            />
+                            /> */}
                         </div> 
                         <div className="flex space-x-2">
                             {!update ? (
                                 <button 
-                                    className="py-1 pl-2 pr-4 mt-4 flex items-center rounded-lg bg-indigo-700 text-white text-sm hover:bg-indigo-800 active:bg-indigo-500 duration-300"
+                                    className="task-field-btn"
                                     onClick={addTask}
                                 >
                                     <PlusIcon className="h-5 w-5 mr-1"/>
@@ -190,7 +190,7 @@ export default function Home() {
                                 </button> 
                                 ) : (
                                     <button 
-                                    className="py-1 pl-2 pr-4 mt-4 flex items-center rounded-lg bg-indigo-700 text-white text-sm hover:bg-indigo-800 active:bg-indigo-500 duration-300"
+                                    className="task-field-btn"
                                     onClick={updateTask}
                                 >
                                     <ArrowPathIcon className="h-5 w-5 mr-1"/>
@@ -198,7 +198,7 @@ export default function Home() {
                                 </button>
                             )}
                             <button 
-                                className="py-1 pl-2 pr-4 mt-4 flex items-center rounded-lg bg-indigo-700 text-sm text-white hover:bg-indigo-800 active:bg-indigo-500 duration-300"
+                                className="task-field-btn"
                                 onClick={() => {
                                     setTitle("")
                                     setDescription("")

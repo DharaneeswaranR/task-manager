@@ -1,9 +1,9 @@
-import { UserIcon, ArrowRightOnRectangleIcon, TrashIcon } from "@heroicons/react/24/outline";
-import axios from "axios";
-import {  useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import { UserContext } from "../contexts/UserContext";
+import { useContext } from "react"
+import { useNavigate } from "react-router-dom"
+import axios from "axios"
+import { UserIcon, ArrowRightOnRectangleIcon, TrashIcon } from "@heroicons/react/24/outline"
+import Navbar from "../components/Navbar"
+import { UserContext } from "../contexts/UserContext"
 
 export default function Profile() {
     const [user] = useContext(UserContext)
@@ -48,7 +48,7 @@ export default function Profile() {
                             className="flex items-center justify-center px-3 py-1 mb-4 rounded-full w-full bg-indigo-700 text-white font-semibold hover:bg-indigo-800 active:bg-indigo-500 duration-300"
                             onClick={logOut}
                         >
-                            <ArrowRightOnRectangleIcon className="h-5 w-5 mr-1" />Log out
+                            <ArrowRightOnRectangleIcon className="h-5 w-5 mr-1" />Logout
                         </button>
                         <button 
                             className="flex items-center justify-center px-3 py-1 mb-5 rounded-full w-full bg-red-700 text-white font-semibold hover:bg-red-800 active:bg-red-500 duration-300"

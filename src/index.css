@@ -18,6 +18,10 @@ body {
     @apply w-full my-1 p-2.5 rounded-lg ring-2 ring-indigo-300 shadow-inner outline-0 focus:ring-indigo-700 duration-300;
 }
 
+.task-field-btn {
+    @apply py-1 pl-2 pr-4 mt-4 flex items-center rounded-lg bg-indigo-700 text-white text-sm hover:bg-indigo-800 active:bg-indigo-500 duration-300;
+}
+
 .sort-btn {
     @apply px-2 mr-2 rounded-full cursor-pointer text-[0.95rem];
 }
