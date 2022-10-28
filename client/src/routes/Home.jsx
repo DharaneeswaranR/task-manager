@@ -14,7 +14,6 @@ export default function Home() {
     const [addTaskField, setAddTaskField] = useState(false)
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
-    // const [deadline, setDeadline] = useState(new Date().toISOString().split('T')[0])
     const [update, setUpdate] = useState("")
     const [sort, setSort] = useState(0) // 0: all, 1: completed, 2: Uncompleted
     const listRef = useRef()
@@ -170,14 +169,6 @@ export default function Home() {
                                 onChange={(event) => setDescription(event.target.value)}
                                 onKeyDown={(event) => event.key === "Enter" && addTask()}
                             />
-                            {/* <label htmlFor="date">Deadline</label>
-                            <input 
-                                type="date" 
-                                id="date"
-                                value={deadline}
-                                onChange={(event) => setDeadline(event.target.value)}
-                                className="p-1 w-fit rounded-md"
-                            /> */}
                         </div> 
                         <div className="flex space-x-2">
                             {!update ? (
@@ -212,6 +203,7 @@ export default function Home() {
                 )}
                 <div className="flex flex-col mt-4">
                     <h2 className="font-semibold text-xl mb-2">Your tasks 📝</h2>
+                    
                     <div className="mb-3">
                         <button 
                             className={`sort-btn ${sort === 0 ? 'bg-indigo-700 text-white' : 'bg-indigo-50'}`} 
