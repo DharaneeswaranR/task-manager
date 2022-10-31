@@ -16,7 +16,7 @@ export default function Register() {
     )
 
     useEffect(() => {
-        if (localStorage.getItem('token')) {
+        if (localStorage.getItem('user')) {
             navigate('/')
         }
     }, [navigate])
@@ -37,7 +37,7 @@ export default function Register() {
 
             try {
                 const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/user`, { username, email, password })
-                localStorage.setItem("token", res.data.token)
+                localStorage.setItem("user", JSON.stringify(res.data))
                 navigate('/')
             } catch (e) {
                 setError(true)

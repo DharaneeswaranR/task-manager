@@ -28,42 +28,36 @@ export default function Home() {
     }, [listRef])
 
     useEffect(() => {
-        try {
-            async function fetchTasks() {
+        async function fetchTasks() {
+            try {
                 const tasks = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/task`, {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user')).token}`
                     }
                 })
 
                 setTasks([...tasks.data])
+            } catch (error) {
+                localStorage.removeItem('user')
+                navigate("/")
+            } 
+        }
+
+        function fetchUser() {
+            if (Object.keys(user).length === 0) {
+                setUser(JSON.parse(localStorage.getItem('user')))
             }
+        }
 
-            fetchTasks()
-        } catch (error) {
-            navigate('/login')
-        }   
-        
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-    async function fetchUser() {
-        const user = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/me`, { 
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-
-        setUser(user.data)
-    }
-
-    if (Object.keys(user).length === 0) {
         fetchUser()
-    }  
+        fetchTasks()
+        
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps  
 
     async function addTask() {
         const newTask = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/task`, { title, description, completed: false }, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${user.token}`
             }
         })
 
@@ -78,15 +72,15 @@ export default function Home() {
         setDescription("")
     }
 
-    async function handleChange(id, event) {
-        const updatedTask = await axios.patch(`${process.env.REACT_APP_BACKEND_URL}/task/${id}`, { completed: event.target.checked }, {
+    function handleChange(id, event) {
+        axios.patch(`${process.env.REACT_APP_BACKEND_URL}/task/${id}`, { completed: event.target.checked }, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${user.token}`
             }
         })
 
         setTasks(prevTasks => {
-            const updatedTasks = prevTasks.map(task => task._id === id ? updatedTask.data : task)
+            const updatedTasks = prevTasks.map(task => task._id === id ? {...task, completed: !task.completed } : task)
 
             return updatedTasks
         })
@@ -102,7 +96,7 @@ export default function Home() {
     async function updateTask() {
         const updatedTask = await axios.patch(`${process.env.REACT_APP_BACKEND_URL}/task/${update}`, { title, description }, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${user.token}`
             }
         })
 
@@ -117,25 +111,25 @@ export default function Home() {
         setUpdate("")
     }
 
-    async function deleteTask(id) {
-        const deletedTask = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/task/${id}`, {
+    function deleteTask(id) {
+        axios.delete(`${process.env.REACT_APP_BACKEND_URL}/task/${id}`, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${user.token}`
             }
         })
-
+        
         setTasks(prevTasks => {
-            const updatedTasks = prevTasks.filter(task => task._id !== deletedTask.data._id)         
+            const updatedTasks = prevTasks.filter(task => task._id !== id)         
 
             return updatedTasks
         })
     }
-    
+
     return (
         <> 
             <Navbar />
             <div className="w-3/4 lg:w-1/2 mt-10 mx-auto text-slate-800">
-                <h1 className="text-4xl font-semibold">Hello {user.username} 👋</h1>
+                <h1 className="text-4xl font-semibold">Hello {user.user?.username} 👋</h1>
                 {!addTaskField ? (
                     <button 
                         className="py-1 mt-4 mb-8 pl-3 pr-4 flex items-center rounded-full bg-slate-100 text-md font-semibold hover:bg-slate-200 duration-300"
@@ -159,7 +153,7 @@ export default function Home() {
                                 placeholder="title"
                                 value={title}
                                 onChange={(event) => setTitle(event.target.value)}
-                                onKeyDown={(event) => event.key === "Enter" && addTask()}
+                                onKeyDown={(event) => event.key === "Enter" && (update ? updateTask() : addTask())}
                             />
                             <textarea 
                                 type="text" 
@@ -167,7 +161,7 @@ export default function Home() {
                                 placeholder="description"
                                 value={description}
                                 onChange={(event) => setDescription(event.target.value)}
-                                onKeyDown={(event) => event.key === "Enter" && addTask()}
+                                onKeyDown={(event) => event.key === "Enter" && (update ? updateTask() : addTask())}
                             />
                         </div> 
                         <div className="flex space-x-2">

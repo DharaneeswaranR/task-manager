@@ -1,34 +1,32 @@
 import { useContext } from "react"
-import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { UserIcon, ArrowRightOnRectangleIcon, TrashIcon } from "@heroicons/react/24/outline"
 import Navbar from "../components/Navbar"
 import { UserContext } from "../contexts/UserContext"
 
 export default function Profile() {
-    const [user] = useContext(UserContext)
-    const navigate = useNavigate()
+    const [user, setUser] = useContext(UserContext)
 
     async function logOut() {
         await axios.post(`${process.env.REACT_APP_BACKEND_URL}/user/logout`, {}, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${user.token}`
             }
         })
 
-        localStorage.removeItem('token')
-        navigate('/login')
+        localStorage.removeItem('user')
+        setUser({})
     }
 
     async function deleteAccount() {
         await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/user/me`, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${user.token}`
             }
         })
 
-        localStorage.removeItem('token')
-        navigate('/register')
+        localStorage.removeItem('user')
+        setUser({})
     }
 
     return (
@@ -40,8 +38,8 @@ export default function Profile() {
                         <UserIcon className="text-slate-600" />
                     </div>
                     <div className="text-center">
-                        <p className="text-xl font-bold text-slate-800">{user.username}</p>
-                        <p className="text-slate-500">{user.email}</p>
+                        <p className="text-xl font-bold text-slate-800">{user.user?.username}</p>
+                        <p className="text-slate-500">{user.user?.email}</p>
                     </div>
                     <div className="flex flex-col p-3">
                         <button 

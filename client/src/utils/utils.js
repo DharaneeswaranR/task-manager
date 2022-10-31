@@ -11,5 +11,5 @@ export function sortTasks(tasks, sort) {
 }
 
 export function PrivateRoute() {
-    return localStorage.getItem('token') ? <Outlet /> : <Navigate to='/login' />
+    return localStorage.getItem('user') ? <Outlet /> : <Navigate to='/login' />
 }
