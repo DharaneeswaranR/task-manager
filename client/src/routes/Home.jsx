@@ -68,8 +68,7 @@ export default function Home() {
             ]
         })
 
-        setTitle("")
-        setDescription("")
+        clearFields()
     }
 
     function handleChange(id, event) {
@@ -106,8 +105,7 @@ export default function Home() {
             return updatedTasks
         })
 
-        setTitle("")
-        setDescription("")
+        clearFields()
         setUpdate("")
     }
 
@@ -123,6 +121,11 @@ export default function Home() {
 
             return updatedTasks
         })
+    }
+
+    function clearFields() {
+        setTitle("")
+        setDescription("")
     }
 
     return (
@@ -143,7 +146,13 @@ export default function Home() {
                         <div className="flex flex-col w-full">
                             <div className="flex justify-between mb-3">
                                 <h2 className="text-lg font-semibold">{update ? "Update task" : "Create new task"}</h2>
-                                <button aria-label="close" onClick={() => setAddTaskField(false)}>
+                                <button aria-label="close" onClick={() => {
+                                    setAddTaskField(false)
+                                    clearFields()
+                                    if (update) {
+                                        setUpdate(false)
+                                    }
+                                }}>
                                     <XMarkIcon className="h-5 w-5 rounded-lg"/>
                                 </button>
                             </div>
@@ -161,7 +170,6 @@ export default function Home() {
                                 placeholder="description"
                                 value={description}
                                 onChange={(event) => setDescription(event.target.value)}
-                                onKeyDown={(event) => event.key === "Enter" && (update ? updateTask() : addTask())}
                             />
                         </div> 
                         <div className="flex space-x-2">
@@ -184,10 +192,7 @@ export default function Home() {
                             )}
                             <button 
                                 className="task-field-btn"
-                                onClick={() => {
-                                    setTitle("")
-                                    setDescription("")
-                                }}
+                                onClick={() => clearFields()}
                             >
                                 <XCircleIcon className="h-5 w-5 mr-1"/>
                                 Clear
